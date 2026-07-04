@@ -40,13 +40,22 @@ def main():
     # Isolate each employee's most recent response, then count how many employees fall into each satisfaction rating, EPastore 07/03/2026
     # Primary Business Question: How many employees reported satisfaction scores of "1" on their most recent survey responses?
 
-#     print(
-#         con.sql(
-#             f"""
+    print(
+        con.sql(
+            f"""
+            WITH latest AS 
+            (
+                SELECT Email, Satisfaction
+                FROM employee_satisfaction
+                QUALIFY ROW_NUMBER() OVER (PARTITION BY Email ORDER BY Timestamp DESC) = 1
+            )
 
-# """
-#         )
-#     )
+            SELECT Satisfaction, COUNT(Email) AS Employees
+            FROM latest
+            GROUP BY Satisfaction;
+"""
+        )
+    )
 
 if __name__ == '__main__':
     main()
